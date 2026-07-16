@@ -4,6 +4,9 @@ use 5.010001;
 use strict;
 use warnings;
 
+use List::Util qw(shuffle);
+use Perinci::Sub::Util qw(gen_modified_sub);
+
 # AUTHORITY
 # DATE
 # DIST
@@ -48,6 +51,19 @@ sub troika_list_cards {
 
     [200, "OK", \@rows];
 }
+
+gen_modified_sub(
+    output_name => 'troika_list_cards_shuffled',
+    base_name => 'troika_list_cards',
+    summary => 'Return the list of cards, shuffled',
+    wrap_code => sub {
+        my $orig = shift;
+        my $res = $orig->(@_);
+        return $res unless $res->[0] == 200;
+        $res->[2] = [shuffle(@{ $res->[2] })];
+        $res;
+    },
+);
 
 1;
 # ABSTRACT: Utilities related to the Anak Bos Troika card game
